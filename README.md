@@ -1,5 +1,7 @@
 # 💡 ssexi.js
 
+https://github.com/user-attachments/assets/0fd717ab-010a-4d29-a036-735042c9fb1d
+
 **Server-Sent Events + Forms for Hypermedia Apps**
 
 `ssexi.js` is a lightweight JavaScript library inspired by `fixi.js` for declarative **live updates** and **form submissions** via **Server-Sent Events (SSE)**.
