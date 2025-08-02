@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Home - SSEXI Web App{% endblock %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div sx-connect="/stream/{{ user.username }}" style="padding: 2rem;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+        <h1>🎉 Welcome {{ user.username }}!</h1>
+        <p>📡 Connected via SSEXI.js - Session ID: <code>{{ user.sessionId }}</code></p>
+        <p>✨ Experience real-time updates with <strong>sx-connect</strong> and <strong>sx-post</strong> attributes!</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Add Post Section -->
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h2>📝 Add New Post</h2>
+            <form id="addPostForm" sx-post="/add_post" sx-swap="none" style="margin-bottom: 1rem;">
+                <input type="text" name="post_content" placeholder="Enter your post..." required
+                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem; font-size: 1rem;">
+                <button type="submit" 
+                        style="width: 100%; background: #28a745; color: white; border: none; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                    ➕ Add Post
+                </button>
+            </form>
+            <div style="font-size: 0.9em; color: #666;">
+                <p>🚀 Uses <code>sx-post="/add_post"</code></p>
+                <p>📊 Updates chart via SSE</p>
+            </div>
+        </div>
+
+        <!-- Generate Posts Section -->
+        <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; border: 1px solid #ffeaa7;">
+            <h2>🎲 Generate Random Posts</h2>
+            <form sx-post="/generate_posts" sx-swap="none" style="margin-bottom: 1rem;">
+                <button id="btn_{{ user.username }}" type="submit"
+                        style="width: 100%; background: #6c757d; color: white; border: 2px solid black; padding: 0.75rem; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                    🎯 Generate 5 Posts
+                </button>
+            </form>
+            <div style="font-size: 0.9em; color: #666;">
+                <p>⚡ Uses <code>sx-post="/generate_posts"</code></p>
+                <p>📊 Updates chart in real-time</p>
+            </div>
+        </div>
+
+        <!-- Chart View Section -->
+        <div style="background: #e7f3ff; padding: 1.5rem; border-radius: 8px; border: 1px solid #b3d9ff;">
+            <h2>📊 Live Post Count Chart</h2>
+            <canvas id="myChart" width="200" height="200"></canvas>
+            <div style="font-size: 0.9em; color: #666; margin-top: 1rem;">
+                <p>📈 Real-time scatter plot (X = post count, Y = post count)</p>
+                <p>🔄 Updates automatically via Server-Sent Events</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts Display -->
+    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+        <h2 id="post_title_length_{{ user.username }}">📋 Your Posts ({{ user.posts|length }} total)</h2>
+        <ol id="ol_{{ user.username }}" style="background: #f8f9fa; padding: 1.5rem; border-radius: 4px; min-height: 200px;">
+            {% for post in user.posts %}
+                <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ loop.index }}. {{ post }}</span>
+                    <form sx-post="/delete_post" sx-swap="none" style="margin: 0;">
+                        <input type="hidden" name="post_index" value="{{ loop.index0 }}">
+                        <button type="submit" id="delete_btn_{{ loop.index0 }}"
+                                style="background: #dc3545; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 3px; cursor: pointer; font-size: 0.8rem;">
+                            🗑️ Delete
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+            {% if not user.posts %}
+                <li style="color: #666; font-style: italic;">No posts yet. Add some above! 👆</li>
+            {% endif %}
+        </ol>
+    </div>
+
+    <!-- Server Message Section -->
+    <div style="background: #f8d7da; padding: 1.5rem; border-radius: 8px; border: 1px solid #f5c6cb; margin-top: 2rem;">
+        <h3>🔐 Server Secret</h3>
+        <p>The server has a hidden message for you. Click the button to reveal it!</p>
+        <form sx-post="/get_server_message" sx-swap="none">
+            <button type="submit" 
+                    style="background: #dc3545; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                🔍 Read Server Message
+            </button>
+        </form>
+        <div style="font-size: 0.9em; color: #666; margin-top: 1rem;">
+            <p>Uses <code>sx-post="/get_server_message"</code> with JavaScript alert via SSE</p>
+        </div>
+    </div>
+
+    <!-- SSEXI Info -->
+    <div style="background: #e7f3ff; padding: 1.5rem; border-radius: 8px; border: 1px solid #b3d9ff; margin-top: 2rem;">
+        <h3>🔍 SSEXI.js Features in Action</h3>
+        <ul style="margin: 0;">
+            <li><strong>SSE Connection:</strong> <code>sx-connect="/stream/{{ user.username }}"</code> on the main div</li>
+            <li><strong>Form Handling:</strong> <code>sx-post="/add_post"</code> with auto form reset</li>
+            <li><strong>Real-time Updates:</strong> Posts list updates via SSE HTML messages</li>
+            <li><strong>JavaScript Execution:</strong> Server can run JS commands via SSE</li>
+            <li><strong>No Manual JavaScript:</strong> Everything handled by SSEXI declarative attributes</li>
+        </ul>
+        <p style="margin-bottom: 0; font-size: 0.9em; color: #666;">
+            📱 Open DevTools Console to see SSEXI events in real-time!
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <button onclick="window.location.href='/logout'" 
+                style="background: #6c757d; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+            🚪 Logout
+        </button>
+    </div>
+</div>
+
+
+	<script>
+    // Fetch the canvas element
+    var ctx = document.getElementById('myChart').getContext('2d');
+
+    // Initial data (empty array for now)
+    var data = {
+      datasets: [{
+        label: 'XY Coordinates',
+        data: [], // Start with an empty dataset
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        pointRadius: 5,
+        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    // Chart configuration
+    var config = {
+      type: 'scatter', // Use a scatter plot for XY coordinates
+      data: data,
+      options: {
+        scales: {
+          x: {
+            min: 0, // Min X value
+            max: 10, // Max X value
+            title: {
+              display: true,
+              text: 'X Axis (0 - 10)'
+            }
+          },
+          y: {
+            min: 0, // Min Y value
+            max: 10, // Max Y value
+            title: {
+              display: true,
+              text: 'Y Axis (0 - 10)'
+            }
+          }
+        },
+        responsive: true
+      }
+    };
+
+    // Create the chart instance
+    var myChart = new Chart(ctx, config);
+</script>
+
+
+<script>
+    
+    // Listen to SSEXI events for debugging
+    document.addEventListener('sx:connected', (e) => {
+        console.log('🔗 SSEXI Connected:', e.detail.endpoint);
+    });
+    
+    document.addEventListener('sx:form-success', (e) => {
+        console.log('✅ SSEXI Form Success:', e.detail.endpoint);
+    });
+    
+    document.addEventListener('sx:form-error', (e) => {
+        console.error('❌ SSEXI Form Error:', e.detail.error);
+    });
+    
+    document.addEventListener('sx:html-updated', (e) => {
+        console.log('🎨 SSEXI HTML Updated:', e.detail.elementId);
+    });
+    
+    document.addEventListener('sx:js-exec', (e) => {
+        console.log('⚡ SSEXI JS Executed:', e.detail.code);
+    });
+    
+    document.addEventListener('sx:js-var', (e) => {
+        console.log('🔧 SSEXI JS Variable:', e.detail.key, '=', e.detail.value);
+    });
+</script>
+{% endblock %}

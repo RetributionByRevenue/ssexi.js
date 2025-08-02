@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Login - SSEXI Web App{% endblock %}
+
+{% block content %}
+    <div style="padding: 2rem;">
+        <h1>🔐 Login</h1>
+
+        {% if error %}
+            <div style="background: #ffebee; border: 1px solid #f44336; color: #d32f2f; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form action="/login" method="POST" style="max-width: 400px;">
+            <div style="margin-bottom: 1rem;">
+                <label for="username" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Username:</label>
+                <input type="text" id="username" name="username" required 
+                       style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password:</label>
+                <input type="password" id="password" name="password" required
+                       style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+            </div>
+
+            <button type="submit" 
+                    style="background: #007bff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                🚀 Login
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+            <p><strong>Demo Users:</strong></p>
+            <ul>
+                <li>Username: <code>mark</code> | Password: <code>pass123</code></li>
+                <li>Username: <code>luke</code> | Password: <code>pass456</code></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
