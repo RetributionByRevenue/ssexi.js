@@ -8,6 +8,18 @@ https://github.com/user-attachments/assets/0fd717ab-010a-4d29-a036-735042c9fb1d
 It’s intentionally simple, limited in scope, and designed for small web apps with minimal JavaScript.
 No frameworks. No build tools. Just drop it in and go.
 
+## Philosophy
+
+SSEXI.js is built on the principle that web applications should be simple, declarative, and follow the hypermedia approach. Instead of complex JavaScript frameworks, it uses inline HTML attributes to define behavior, making web applications more readable and maintainable.
+
+### Core Principles
+
+1. **Single Persistent Connection**: Keep one GET connection open using `sx-connect` on the body element
+2. **Form-Based Interactions**: Use standard HTML forms with `sx-post` for user interactions
+3. **Declarative Attributes**: Define behavior through HTML attributes, not JavaScript
+4. **Real-time Reactivity**: Superior to traditional AJAX through persistent SSE connections
+5. **Hypermedia Compliance**: HTML-first approach with minimal JavaScript interference
+
 ---
 
 ## 🚀 Getting Started
