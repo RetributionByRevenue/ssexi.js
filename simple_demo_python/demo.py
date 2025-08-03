@@ -73,7 +73,7 @@ async def website_logic():
                 
                 # Every 10 counts, change background color
                 if count % 10 == 0:
-                    colors = ["lightblue", "lightgreen", "lightcoral", "lightyellow"]
+                    colors = ["lightblue", "lightgreen", "lightcoral", "wheat"]
                     color = random.choice(colors)
                     
                     color_update = {
