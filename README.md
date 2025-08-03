@@ -1,4 +1,4 @@
-# 💡 ssexi.js
+# 🍆 ssexi.js
 
 https://github.com/user-attachments/assets/0fd717ab-010a-4d29-a036-735042c9fb1d
 
@@ -65,7 +65,7 @@ Send newline-delimited JSON SSE messages like this:
 ```
 data: {"html": {"news-feed": "<div id='news-feed'><p>Latest News!</p></div>"}}
 data: {"js": {"exec": "console.log('News updated!')"}}
-data { "js": { "counterValue": 5 } }
+data: {"js": {"counterValue": 5 }}
 ```
 
 Each `data:` line should contain **one JSON object**. Supported keys:
