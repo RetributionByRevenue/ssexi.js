@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSEXI.js Demo - Declarative SSE Hypermedia</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.5s ease;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .three-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .column {
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f9f9f9;
+            min-height: 400px;
+        }
+        
+        .column h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .display-box {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        
+        .form-container button {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .form-container button:hover {
+            background: #0056b3;
+        }
+        
+        .todo-list {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .todo-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .todo-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .todo-list li:last-child {
+            border-bottom: none;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        .demo-section {
+            max-width: 1200px;
+            margin: 40px auto 20px auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .demo-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        
+        .demo-section table {
+            margin-top: 15px;
+        }
+        
+        .demo-section ul {
+            margin-top: 15px;
+        }
+        
+        .demo-section li {
+            margin-bottom: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .three-column-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body sx-connect="/website-logic">
+    <div class="header">
+        <h1>🚀 SSEXI.js Demo</h1>
+        <p><strong>SSE + Fixi:</strong> Declarative Server-Sent Events for Hypermedia</p>
+        <div class="info">
+            <p>This page demonstrates <strong>ssexi.js</strong> with <code>sx-connect="/website-logic"</code> on the body tag. All three columns update in real-time via a single SSE connection!</p>
+        </div>
+    </div>
+
+    <div class="three-column-layout">
+        <!-- Column 1: Live Timer -->
+        <div class="column">
+            <h2>📡 Live Timer</h2>
+            <div id="timestamp" class="display-box">Connecting...</div>
+            <div class="info">
+                <p>Updates every second via SSE</p>
+                <p>Connected: <code>/website-logic</code></p>
+            </div>
+        </div>
+
+        <!-- Column 2: Interactive Counter -->
+        <div class="column">
+            <h2>🔢 Counter</h2>
+            <div id="counter" class="display-box">Count: 0</div>
+            <div class="info">
+                <p><strong>What happens:</strong></p>
+                <ul>
+                    <li>📊 Updates every second</li>
+                    <li>🔧 Every 5 counts: Sets JS variable</li>
+                    <li>📝 Every 5 counts: Console log</li>
+                    <li>🎨 Every 10 counts: Background color</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Column 3: Todo -->
+        <div class="column">
+            <h2>📝 Todo</h2>
+            <div class="form-container">
+                <form id="todoForm" sx-post="/todo" sx-swap="none">
+                    <input type="text" name="todo_text" placeholder="Add a todo..." required>
+                    <button type="submit">Add Todo</button>
+                </form>
+            </div>
+            
+            <div class="todo-list">
+                <ul id="todos">
+                    <!-- Todos populated via SSE -->
+                </ul>
+            </div>
+            
+            <div class="info">
+                <p><strong>How it works:</strong></p>
+                <ul>
+                    <li>📝 <code>sx-post="/todo"</code> form</li>
+                    <li>🖥️ Server prints to console</li>
+                    <li>📡 SSE updates list real-time</li>
+                    <li>🔄 Pure SSEXI - no extra JS</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🔍 SSE Message Types Supported</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #f0f0f0;">
+                <th style="border: 1px solid #ddd; padding: 8px;">Message Type</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Format</th>
+                <th style="border: 1px solid #ddd; padding: 8px;">Description</th>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;"><strong>HTML Update</strong></td>
+                <td style="border: 1px solid #ddd; padding: 8px;"><code>{"html": {"elementId": "content"}}</code></td>
+                <td style="border: 1px solid #ddd; padding: 8px;">Updates DOM element by ID</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;"><strong>JS Variable</strong></td>
+                <td style="border: 1px solid #ddd; padding: 8px;"><code>{"js": {"varName": value}}</code></td>
+                <td style="border: 1px solid #ddd; padding: 8px;">Sets window.varName = value</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;"><strong>JS Execution</strong></td>
+                <td style="border: 1px solid #ddd; padding: 8px;"><code>{"js": {"exec": "code"}}</code></td>
+                <td style="border: 1px solid #ddd; padding: 8px;">Executes JavaScript code</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚡ Features</h2>
+        <ul>
+            <li>🎯 <strong>Declarative:</strong> Just add <code>sx-connect="/endpoint"</code> to any element</li>
+            <li>📝 <strong>Form Handling:</strong> Use <code>sx-post="/endpoint"</code> for declarative form submissions</li>
+            <li>🔄 <strong>Auto-reconnect:</strong> Handles connection drops automatically</li>
+            <li>📊 <strong>Custom Events:</strong> Dispatches <code>sx:*</code> events for extensibility</li>
+            <li>🛡️ <strong>Error Handling:</strong> Graceful error handling with events</li>
+            <li>🔍 <strong>MutationObserver:</strong> Automatically initializes new elements</li>
+            <li>⚡ <strong>JavaScript Execution:</strong> Server can execute JS code via SSE</li>
+            <li>🎨 <strong>HTML Updates:</strong> Target specific DOM elements for updates</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>🔧 Open DevTools Console to see SSEXI events and JS variables!</p>
+        <p>📖 Check <code>window.counterValue</code> - updates every 5 seconds via SSE</p>
+    </div>
+
+    <!-- Load SSEXI.js from root directory -->
+    <script src="/ssexi.js"></script>
+    
+    <!-- Demo event listeners and form reset -->
+    <!-- the section is not needed, just for debugging -->
+    <script>
+        // Listen to SSEXI events for debugging
+        document.addEventListener('sx:connected', (e) => {
+            console.log('🔗 SSEXI Connected:', e.detail.endpoint);
+        });
+        
+        document.addEventListener('sx:message', (e) => {
+            console.log('📨 SSEXI Message:', e.detail.update);
+        });
+        
+        // Listen to SSEXI form events
+        document.addEventListener('sx:form-success', (e) => {
+            console.log('✅ SSEXI Form Success:', e.detail.endpoint);
+        });
+        
+        document.addEventListener('sx:form-error', (e) => {
+            console.error('❌ SSEXI Form Error:', e.detail.error);
+        });
+        
+        document.addEventListener('sx:js-var', (e) => {
+            console.log('🔧 SSEXI JS Variable:', e.detail.key, '=', e.detail.value);
+        });
+        
+        document.addEventListener('sx:js-exec', (e) => {
+            console.log('⚡ SSEXI JS Execution:', e.detail.code);
+        });
+        
+        document.addEventListener('sx:html-updated', (e) => {
+            console.log('🎨 SSEXI HTML Updated:', e.detail.elementId);
+        });
+        
+        document.addEventListener('sx:error', (e) => {
+            console.error('❌ SSEXI Error:', e.detail.error);
+        });
+    </script>
+</body>
+</html>
