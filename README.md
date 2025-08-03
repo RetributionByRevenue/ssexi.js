@@ -63,9 +63,9 @@ Apply declarative attributes **directly on `<body>`**:
 Send newline-delimited JSON SSE messages like this:
 
 ```
-data: {"html": {"news-feed": "<div id='news-feed'><p>Latest News!</p></div>"}}
-data: {"js": {"exec": "console.log('News updated!')"}}
-data: {"js": {"counterValue": 5 }}
+data: {"html": {"news-feed": "<div id='news-feed'><p>Latest News!</p></div>"}} \n\n
+data: {"js": {"exec": "console.log('News updated!')"}} \n\n
+data: {"js": {"counterValue": 5 }} \n\n
 ```
 
 Each `data:` line should contain **one JSON object**. Supported keys:
